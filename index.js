@@ -50,7 +50,8 @@ function Wallet (options) {
 Wallet.prototype.send =
 Wallet.prototype.transact = function () {
   return new Spender()
-    .from(coinkey.privateWif)
+    .from(this.coinkey.privateWif)
+    .blockchain(this.blockchain)
 }
 
 /**

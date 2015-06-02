@@ -4,6 +4,7 @@ var Spender = require('spender')
 var CoinKey = require('coinkey')
 var coininfo = require('coininfo')
 var equal = require('deep-equal')
+var typeforce = require('typeforce')
 
 var coinprops = [
   'privateWif',
@@ -20,30 +21,41 @@ module.exports = Wallet
 
 /**
  * primitive one key common blockchain wallet
- * @param  {CoinKey|privateWif} coinkey
- * @param  {CommonBlockchain impl} common-blockchain api
- * @return {Object} wallet
+ * @param  {Object} options
+ * @param  {CoinKey|privateWif} options.coinkey
+ * @param  {CommonBlockchain impl} options.blockchain common-blockchain api
  */
-function Wallet (coinkey, blockchain) {
-  if (typeof coinkey === 'string') coinkey = CoinKey.fromWif(coinkey)
+function Wallet (options) {
+  if (typeof options.coinkey === 'string') coinkey = CoinKey.fromWif(coinkey)
 
-  assert(coinkey && blockchain, 'Both coinkey and blockchain are required')
+  typeforce('Object', options.coinkey)
+  typeforce({
+    blockchain: 'Object',
+    network: 'String'
+  }, options)
 
   this.txs = []
-  this.coinkey = coinkey
-  this.blockchain = blockchain
+  this.coinkey = options.coinkey
+  this.blockchain = options.blockchain
+  this.networkName = options.network
 
   coinprops.forEach(function(p) {
-    wallet[p] = coinkey[p]
-  })
+    this[p] = this.coinkey[p]
+  }, this)
 }
 
+/**
+ * @return {Spender} https://github.com/mvayngrib/spender
+ */
 Wallet.prototype.send =
 Wallet.prototype.transact = function () {
   return new Spender()
     .from(coinkey.privateWif)
 }
 
+/**
+ * dump entire balance to another address
+ */
 Wallet.prototype.dumpTo = function (to, cb) {
   var self = this
 
@@ -56,6 +68,9 @@ Wallet.prototype.dumpTo = function (to, cb) {
   })
 }
 
+/**
+ * get new transactions (ones not in wallet.txs)
+ */
 Wallet.prototype.newTransactions = function(height, cb) {
   var l = txs.length
   this.transactions(height, function(err) {
@@ -65,6 +80,9 @@ Wallet.prototype.newTransactions = function(height, cb) {
   })
 }
 
+/**
+ * call wallet.blockchain and get transactions for this wallet's address
+ */
 Wallet.prototype.transactions = function(height, cb) {
   var txs = this.txs
   this.blockchain.addresses.transactions([this.coinkey.publicAddress], height, function(err, arr) {
@@ -76,12 +94,18 @@ Wallet.prototype.transactions = function(height, cb) {
   })
 }
 
+/**
+ * see common-blockchain addresses.summary
+ */
 Wallet.prototype.summary = function(cb) {
   return this.blockchain.addresses.summary([this.coinkey.publicAddress], function(err, arr) {
     cb(err, arr && arr[0])
   })
 }
 
+/**
+ * see common-blockchain addresses.unspents
+ */
 Wallet.prototype.unspents = function(cb) {
   return this.blockchain.addresses.unspents([this.coinkey.publicAddress], cb)
 }
@@ -99,14 +123,26 @@ Wallet.prototype.toJSON = function() {
   }
 }
 
-Wallet.createRandom = function (blockchain) {
-  var network = blockchain.network
-  if (network === 'testnet') network = 'bitcoin-test'
+Wallet.createRandom = function (options) {
+  typeforce({
+    network: 'String',
+    blockchain: 'Object'
+  }, options)
 
-  var info = coininfo(network)
+  var network = options.network
+  // coininfo has a different naming scheme
+  var cnetwork
+  if (network === 'testnet') cnetwork = 'bitcoin-test'
+  else cnetwork = network
+
+  var info = coininfo(cnetwork)
   if (!info) throw new Error('unknown network')
 
-  return new Wallet(CoinKey.createRandom(info), blockchain)
+  return new Wallet({
+    coinkey: CoinKey.createRandom(info),
+    blockchain: options.blockchain,
+    network: network
+  })
 }
 
 Wallet.fromJSON = function (json, blockchain) {

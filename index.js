@@ -16,11 +16,7 @@ var coinprops = [
   'compressed'
 ]
 
-module.exports = {
-  forKey: walletForKey,
-  fromJSON: fromJSON,
-  createRandom: createRandom
-}
+module.exports = Wallet
 
 /**
  * primitive one key common blockchain wallet
@@ -28,81 +24,95 @@ module.exports = {
  * @param  {CommonBlockchain impl} common-blockchain api
  * @return {Object} wallet
  */
-function walletForKey (coinkey, blockchain) {
+function Wallet (coinkey, blockchain) {
   if (typeof coinkey === 'string') coinkey = CoinKey.fromWif(coinkey)
 
   assert(coinkey && blockchain, 'Both coinkey and blockchain are required')
 
-  var txs = []
-  var wallet = {
-    txs: txs,
-    coinkey: coinkey,
-
-    send: function (amount) {
-      return new Spender()
-        .from(coinkey.privateWif)
-        .satoshis(amount)
-    },
-
-    dumpTo: function (to, cb) {
-      wallet.summary(function(err, summary) {
-        if (err) return cb(err)
-
-        wallet.send(summary.balance)
-          .to(to)
-          .spend(cb)
-      })
-    },
-
-    transactions: function(height, cb) {
-      blockchain.addresses.transactions([coinkey.publicAddress], height, function(err, arr) {
-        if (err) return cb(err)
-
-        // merge arr into txs
-        mergeTxs(txs, arr)
-        cb(null, txs)
-      })
-    },
-
-    summary: function(cb) {
-      return blockchain.addresses.summary([coinkey.publicAddress], function(err, arr) {
-        cb(err, arr && arr[0])
-      })
-    },
-
-    unspents: function(cb) {
-      return blockchain.addresses.unspents([coinkey.publicAddress], cb)
-    },
-
-    balance: function (cb) {
-      wallet.summary(function (err, summary) {
-        cb(err, summary && summary.balance)
-      })
-    },
-
-    toJSON: function() {
-      return {
-        privateWif: wallet.privateWif,
-        txs: txs
-      }
-    }
-  }
+  this.txs = []
+  this.coinkey = coinkey
+  this.blockchain = blockchain
 
   coinprops.forEach(function(p) {
     wallet[p] = coinkey[p]
   })
-
-  return wallet
 }
 
-function createRandom (blockchain) {
+Wallet.prototype.send =
+Wallet.prototype.transact = function () {
+  return new Spender()
+    .from(coinkey.privateWif)
+}
+
+Wallet.prototype.dumpTo = function (to, cb) {
+  var self = this
+
+  this.summary(function(err, summary) {
+    if (err) return cb(err)
+
+    self.send(summary.balance)
+      .to(to)
+      .spend(cb)
+  })
+}
+
+Wallet.prototype.newTransactions = function(height, cb) {
+  var l = txs.length
+  this.transactions(height, function(err) {
+    if (err) return cb(err)
+
+    cb(null, txs.slice(l))
+  })
+}
+
+Wallet.prototype.transactions = function(height, cb) {
+  var txs = this.txs
+  this.blockchain.addresses.transactions([this.coinkey.publicAddress], height, function(err, arr) {
+    if (err) return cb(err)
+
+    // merge arr into txs
+    mergeTxs(txs, arr)
+    cb(null, txs)
+  })
+}
+
+Wallet.prototype.summary = function(cb) {
+  return this.blockchain.addresses.summary([this.coinkey.publicAddress], function(err, arr) {
+    cb(err, arr && arr[0])
+  })
+}
+
+Wallet.prototype.unspents = function(cb) {
+  return this.blockchain.addresses.unspents([this.coinkey.publicAddress], cb)
+}
+
+Wallet.prototype.balance = function (cb) {
+  this.summary(function (err, summary) {
+    cb(err, summary && summary.balance)
+  })
+}
+
+Wallet.prototype.toJSON = function() {
+  return {
+    privateWif: wallet.privateWif,
+    txs: txs
+  }
+}
+
+Wallet.createRandom = function (blockchain) {
   var network = blockchain.network
   if (network === 'testnet') network = 'bitcoin-test'
 
   var info = coininfo(network)
   if (!info) throw new Error('unknown network')
 
-  return walletForKey(CoinKey.createRandom(info), blockchain)
+  return new Wallet(CoinKey.createRandom(info), blockchain)
+}
+
+Wallet.fromJSON = function (json, blockchain) {
+  var w = new Wallet(json.privateWif, blockchain)
+  if (json.txs) w.txs = json.txs
+  return w
 }
 
 // TODO: optimize
@@ -122,10 +132,4 @@ function mergeTxs(into, from) {
 
     if (!merged) into.push(b)
   })
-}
-
-function fromJSON(json, blockchain) {
-  var w = walletForKey(json.privateWif, blockchain)
-  w.txs = json.txs
-  return w
 }

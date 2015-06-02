@@ -2,6 +2,7 @@
 var assert = require('assert')
 var spend = require('spend')
 var CoinKey = require('coinkey')
+var coininfo = require('coininfo')
 
 var coinprops = [
   'privateWif',
@@ -15,7 +16,8 @@ var coinprops = [
 ]
 
 module.exports = {
-  forKey: walletForKey
+  forKey: walletForKey,
+  createRandom: createRandom
 }
 
 /**
@@ -66,4 +68,14 @@ function walletForKey (coinkey, blockchain) {
   })
 
   return wallet
+}
+
+function createRandom (blockchain) {
+  var network = blockchain.network
+  if (network === 'testnet') network = 'bitcoin-test'
+
+  var info = coininfo(network)
+  if (!info) throw new Error('unknown network')
+
+  return walletForKey(CoinKey.createRandom(info), blockchain)
 }

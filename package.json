@@ -22,11 +22,11 @@
   },
   "homepage": "https://github.com/mvayngrib/simple-wallet",
   "dependencies": {
+    "coininfo": "^0.5.0",
     "coinkey": "^1.4.0",
     "spend": "0.0.1"
   },
   "devDependencies": {
-    "cb-blockr": "^3.1.1",
-    "coininfo": "^0.5.0"
+    "cb-blockr": "^3.1.1"
   }
 }

@@ -1,0 +1,32 @@
+{
+  "name": "simple-wallet",
+  "version": "0.0.1",
+  "description": "simple bitcoin wallet - for one key",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mvayngrib/simple-wallet"
+  },
+  "keywords": [
+    "bitcoin",
+    "wallet",
+    "single-key"
+  ],
+  "author": "Mark Vayngrib <mark.vayngrib@lablz.com> (http://github.com/mvayngrib)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mvayngrib/simple-wallet/issues"
+  },
+  "homepage": "https://github.com/mvayngrib/simple-wallet",
+  "dependencies": {
+    "coinkey": "^1.4.0",
+    "spend": "0.0.1"
+  },
+  "devDependencies": {
+    "cb-blockr": "^3.1.1",
+    "coininfo": "^0.5.0"
+  }
+}

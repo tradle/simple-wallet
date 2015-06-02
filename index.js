@@ -3,6 +3,7 @@ var assert = require('assert')
 var Spender = require('spender')
 var CoinKey = require('coinkey')
 var coininfo = require('coininfo')
+var equal = require('deep-equal')
 
 var coinprops = [
   'privateWif',
@@ -17,6 +18,7 @@ var coinprops = [
 
 module.exports = {
   forKey: walletForKey,
+  fromJSON: fromJSON,
   createRandom: createRandom
 }
 
@@ -31,7 +33,9 @@ function walletForKey (coinkey, blockchain) {
 
   assert(coinkey && blockchain, 'Both coinkey and blockchain are required')
 
+  var txs = []
   var wallet = {
+    txs: txs,
     coinkey: coinkey,
 
     send: function (amount) {
@@ -50,19 +54,37 @@ function walletForKey (coinkey, blockchain) {
       })
     },
 
+    transactions: function(height, cb) {
+      blockchain.addresses.transactions([coinkey.publicAddress], height, function(err, arr) {
+        if (err) return cb(err)
+
+        // merge arr into txs
+        mergeTxs(txs, arr)
+        cb(null, txs)
+      })
+    },
+
+    summary: function(cb) {
+      return blockchain.addresses.summary([coinkey.publicAddress], function(err, arr) {
+        cb(err, arr && arr[0])
+      })
+    },
+
+    unspents: function(cb) {
+      return blockchain.addresses.unspents([coinkey.publicAddress], cb)
+    },
+
     balance: function (cb) {
       wallet.summary(function (err, summary) {
         cb(err, summary && summary.balance)
       })
     },
 
-    summary: function (cb) {
-      blockchain.addresses.summary([coinkey.publicAddress], function (err, arr) {
-        if (err) return cb(err)
-        if (!arr.length) return cb(new Error('address not found'))
-
-        cb(null, arr[0])
-      })
+    toJSON: function() {
+      return {
+        privateWif: wallet.privateWif,
+        txs: txs
+      }
     }
   }
 
@@ -81,4 +103,29 @@ function createRandom (blockchain) {
   if (!info) throw new Error('unknown network')
 
   return walletForKey(CoinKey.createRandom(info), blockchain)
+}
+
+// TODO: optimize
+function mergeTxs(into, from) {
+  from.forEach(function(b) {
+    var merged = into.some(function(a) {
+      if (a.txId === b.txId) {
+        if (!equal(a, b)) {
+          for (var p in b) {
+            a[p] = b[p]
+          }
+        }
+
+        return true
+      }
+    })
+
+    if (!merged) into.push(b)
+  })
+}
+
+function fromJSON(json, blockchain) {
+  var w = walletForKey(json.privateWif, blockchain)
+  w.txs = json.txs
+  return w
 }

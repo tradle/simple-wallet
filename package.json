@@ -24,6 +24,7 @@
   "dependencies": {
     "coininfo": "^0.5.0",
     "coinkey": "^1.4.0",
+    "deep-equal": "^1.0.0",
     "spender": "git://github.com/mvayngrib/spender"
   },
   "devDependencies": {

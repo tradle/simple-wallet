@@ -24,8 +24,14 @@ wallet.summary(function(err, summary) {
 })
 
 // send money
-wallet.send(satoshis, toAddress, function(err, txId, tx) {
-})
+// see [Spender API](https://github.com/mvayngrib/spender)
+wallet.send(satoshis)
+  .to(toAddress)
+  .data(new Buffer('this goes in OP_RETURN'))
+  .change(/* defaults to wallet's own address */)
+  .spend(function(err, txId, tx) {
+    
+  })
 
 // dump wallet balance to another address
 wallet.dumpTo(toAddress, function(err, txId, tx) {

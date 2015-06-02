@@ -1,6 +1,6 @@
 
 var assert = require('assert')
-var spend = require('spend')
+var Spender = require('spender')
 var CoinKey = require('coinkey')
 var coininfo = require('coininfo')
 
@@ -34,16 +34,19 @@ function walletForKey (coinkey, blockchain) {
   var wallet = {
     coinkey: coinkey,
 
-    send: function (satoshis, to, cb) {
-      spend.blockchain = blockchain
-      spend(coinkey.privateWif, to, satoshis, cb)
+    send: function (amount) {
+      return new Spender()
+        .from(coinkey.privateWif)
+        .satoshis(amount)
     },
 
     dumpTo: function (to, cb) {
       wallet.summary(function(err, summary) {
         if (err) return cb(err)
 
-        wallet.send(summary.balance, to, cb)
+        wallet.send(summary.balance)
+          .to(to)
+          .spend(cb)
       })
     },
 

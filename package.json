@@ -24,7 +24,7 @@
   "dependencies": {
     "coininfo": "^0.5.0",
     "coinkey": "^1.4.0",
-    "spend": "0.0.1"
+    "spender": "git://github.com/mvayngrib/spender"
   },
   "devDependencies": {
     "cb-blockr": "^3.1.1"

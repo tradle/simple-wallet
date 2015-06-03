@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/mvayngrib/simple-wallet",
   "dependencies": {
-    "coininfo": "^0.5.0",
-    "coinkey": "^1.4.0",
+    "bitcoinjs-lib": "^1.4.1",
     "deep-equal": "^1.0.0",
-    "spender": "git://github.com/mvayngrib/spender",
+    "spender": "git://github.com/mvayngrib/spender#bitcoinjs-lib",
     "typeforce": "^1.0.0"
   },
   "devDependencies": {
-    "cb-blockr": "^3.1.1"
+    "cb-blockr": "^3.1.1",
+    "tape": "^4.0.0"
   }
 }

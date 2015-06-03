@@ -85,6 +85,18 @@ Wallet.prototype.transactions = function(height, cb) {
   })
 }
 
+Wallet.prototype.txById = function(id) {
+  var match
+  this.txs.some(function(tx) {
+    if (tx.getId() === id) {
+      match = tx
+      return true
+    }
+  })
+
+  return match
+}
+
 /**
  * see common-blockchain addresses.summary
  */

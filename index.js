@@ -24,11 +24,13 @@ function Wallet (options) {
     network: 'String'
   }, options)
 
+  assert(options.network in bitcoin.networks, 'unknown network: ' + options.network)
+
   this.txs = []
   this.pub = this.priv.pub
+  this.networkName = options.network
   this.address = this.pub.getAddress(bitcoin.networks[this.networkName])
   this.addressString = this.address.toString()
-  this.networkName = options.network
   this.blockchain = options.blockchain
 }
 

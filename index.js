@@ -63,8 +63,8 @@ Wallet.prototype.dumpTo = function (to, cb) {
  * get new transactions (ones not in wallet.txs)
  */
 Wallet.prototype.newTransactions = function(height, cb) {
-  var l = txs.length
-  this.transactions(height, function(err) {
+  var l = this.txs.length
+  this.transactions(height, function(err, txs) {
     if (err) return cb(err)
 
     cb(null, txs.slice(l))

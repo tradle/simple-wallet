@@ -75,6 +75,11 @@ Wallet.prototype.newTransactions = function(height, cb) {
  * call wallet.blockchain and get transactions for this wallet's address
  */
 Wallet.prototype.transactions = function(height, cb) {
+  if (typeof height === 'function') {
+    cb = height
+    height = undefined
+  }
+
   var txs = this.txs
   this.blockchain.addresses.transactions([this.addressString], height, function(err, arr) {
     if (err) return cb(err)

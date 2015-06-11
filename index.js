@@ -4,6 +4,7 @@ var Spender = require('spender')
 var bitcoin = require('bitcoinjs-lib')
 var equal = require('deep-equal')
 var typeforce = require('typeforce')
+var noop = function() {}
 
 module.exports = Wallet
 
@@ -44,6 +45,16 @@ Wallet.prototype.transact = function () {
     .blockchain(this.blockchain)
 }
 
+Wallet.prototype.sendTx = function(tx, cb) {
+  cb = cb || noop
+  var hex = tx.toHex ? tx.toHex() : tx
+
+  assert(typeof hex === 'string', 'invalid transaction')
+  return this.blockchain.transactions.propagate(hex, function(err) {
+    cb(err, tx)
+  })
+}
+
 /**
  * dump entire balance to another address
  */
@@ -55,7 +66,7 @@ Wallet.prototype.dumpTo = function (to, cb) {
 
     self.send(summary.balance)
       .to(to)
-      .spend(cb)
+      .execute(cb)
   })
 }
 

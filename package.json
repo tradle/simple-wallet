@@ -28,7 +28,7 @@
     "typeforce": "^1.0.0"
   },
   "devDependencies": {
-    "cb-blockr": "^3.1.1",
+    "cb-blockr": "git://github.com/weilu/cb-blockr#4.0.0",
     "tape": "^4.0.0"
   }
 }

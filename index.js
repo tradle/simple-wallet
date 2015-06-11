@@ -22,14 +22,14 @@ function Wallet (options) {
   typeforce('Object', this.priv)
   typeforce({
     blockchain: 'Object',
-    network: 'String'
+    networkName: 'String'
   }, options)
 
-  assert(options.network in bitcoin.networks, 'unknown network: ' + options.network)
+  assert(options.networkName in bitcoin.networks, 'unknown network: ' + options.networkName)
 
   this.txs = []
   this.pub = this.priv.pub
-  this.networkName = options.network
+  this.networkName = options.networkName
   this.address = this.pub.getAddress(bitcoin.networks[this.networkName])
   this.addressString = this.address.toString()
   this.blockchain = options.blockchain
@@ -138,7 +138,7 @@ Wallet.prototype.balance = function (cb) {
 Wallet.prototype.toJSON = function() {
   return {
     priv: this.priv.toWIF(this.networkName),
-    network: this.networkName,
+    networkName: this.networkName,
     txs: this.txs
   }
 }
@@ -147,14 +147,14 @@ Wallet.createRandom = function (options) {
   return new Wallet({
     priv: bitcoin.ECKey.makeRandom(true),
     blockchain: options.blockchain,
-    network: options.network
+    networkName: options.networkName
   })
 }
 
 Wallet.fromJSON = function (json, blockchain) {
   var w = new Wallet({
     priv: json.priv,
-    network: json.network,
+    networkName: json.networkName,
     blockchain: blockchain
   })
 

@@ -16,6 +16,6 @@ test('to/from json', function(t) {
 function newTestnetWallet() {
   return Wallet.createRandom({
     blockchain: new Blockchain('testnet'),
-    network: 'testnet'
+    networkName: 'testnet'
   })
 }

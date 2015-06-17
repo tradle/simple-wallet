@@ -24,7 +24,7 @@
   "dependencies": {
     "bitcoinjs-lib": "^1.4.1",
     "deep-equal": "^1.0.0",
-    "spender": "git://github.com/mvayngrib/spender#bitcoinjs-lib",
+    "spender": "git://github.com/mvayngrib/spender",
     "typeforce": "^1.0.0"
   },
   "devDependencies": {

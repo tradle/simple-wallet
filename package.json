@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/mvayngrib/simple-wallet",
   "dependencies": {
-    "bitcoinjs-lib": "^1.4.1",
+    "bitcoinjs-lib": "mvayngrib/bitcoinjs-lib#lazy1.5.7",
     "deep-equal": "^1.0.0",
     "spender": "^1.0.0",
     "typeforce": "^1.0.0"

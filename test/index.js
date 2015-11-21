@@ -1,5 +1,5 @@
 var test = require('tape')
-var Blockchain = require('cb-blockr')
+var Blockchain = require('@tradle/cb-blockr')
 var Wallet = require('../')
 
 test('to/from json', function(t) {

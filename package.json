@@ -1,5 +1,5 @@
 {
-  "name": "simple-wallet",
+  "name": "@tradle/simple-wallet",
   "version": "0.0.1",
   "description": "simple bitcoin wallet - for one key",
   "main": "index.js",
@@ -22,13 +22,13 @@
   },
   "homepage": "https://github.com/mvayngrib/simple-wallet",
   "dependencies": {
-    "bitcoinjs-lib": "mvayngrib/bitcoinjs-lib#lazy1.5.7",
+    "@tradle/bitcoinjs-lib": "^1.5.7",
+    "@tradle/spender": "^1.0.0",
     "deep-equal": "^1.0.0",
-    "spender": "^1.0.0",
     "typeforce": "^1.0.0"
   },
   "devDependencies": {
-    "cb-blockr": "git://github.com/weilu/cb-blockr#4.0.0",
+    "@tradle/cb-blockr": "^3.1.1",
     "tape": "^4.0.0"
   }
 }

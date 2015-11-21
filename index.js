@@ -1,7 +1,7 @@
 
 var assert = require('assert')
-var Spender = require('spender')
-var bitcoin = require('bitcoinjs-lib')
+var Spender = require('@tradle/spender')
+var bitcoin = require('@tradle/bitcoinjs-lib')
 var equal = require('deep-equal')
 var typeforce = require('typeforce')
 var noop = function() {}

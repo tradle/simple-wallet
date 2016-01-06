@@ -1,6 +1,6 @@
 {
   "name": "@tradle/simple-wallet",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "simple bitcoin wallet - for one key",
   "main": "index.js",
   "scripts": {

@@ -23,7 +23,7 @@
   "homepage": "https://github.com/mvayngrib/simple-wallet",
   "dependencies": {
     "@tradle/bitcoinjs-lib": "^1.5.7",
-    "@tradle/spender": "^1.0.0",
+    "@tradle/spender": "^1.0.4",
     "deep-equal": "^1.0.0",
     "typeforce": "^1.0.0"
   },

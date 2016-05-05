@@ -7,6 +7,7 @@ var typeforce = require('typeforce')
 var noop = function() {}
 
 module.exports = Wallet
+module.exports.transactor = require('./transactor')
 
 /**
  * primitive one key common blockchain wallet

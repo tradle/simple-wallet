@@ -1,19 +1,17 @@
 # simple-wallet
 
-Basically coinkey + your choice of common-blockchain API for a simple one key wallet
+one-key wallet using common-blockchain API
 
 ```js
 var Blockchain = require('cb-blockr')
-var coininfo = require('coininfo')
-var CoinKey = require('coinkey')
 var Wallet = require('simple-wallet')
-var key = CoinKey.createRandom(coininfo('bitcoin-test'))
-var wallet = new Wallet(key, new Blockchain('testnet'))
-// alt: wallet = new Wallet(privateWif, new Blockchain('testnet'))
-
-wallet.publicAddress // coinkey.publicAddress
-wallet.privateWif    // coinkey.privateWif
-wallet.coinkey       // coinkey
+var wifKey = require('./path/to/wifPrivKey')
+var networkName = 'testnet'
+var wallet = new Wallet({
+  priv: wifKey,
+  blockchain: new Blockchain(networkName),
+  networkName: networkName
+})
 
 // get balance
 wallet.balance(function(err, satoshis) {
@@ -25,8 +23,8 @@ wallet.summary(function(err, summary) {
 
 // send money
 // see [Spender API](https://github.com/mvayngrib/spender)
-wallet.send(satoshis)
-  .to(toAddress)
+wallet.send()
+  .to(toAddress, satoshis)
   .data(new Buffer('this goes in OP_RETURN'))
   .change(/* defaults to wallet's own address */)
   .execute(function(err, txId, tx) {

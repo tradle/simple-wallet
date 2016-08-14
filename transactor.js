@@ -4,7 +4,7 @@ const bitcoin = require('@tradle/bitcoinjs-lib')
 
 // wallet => transactor API (tradle/transactor)
 module.exports = function transactorClient (opts) {
-  const wallet = opts.wallet
+  const wallet = opts.wallet || new Wallet(opts)
   return {
     send: function (opts, cb) {
       const spender = wallet.send()

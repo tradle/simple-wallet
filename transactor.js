@@ -1,6 +1,7 @@
 'use strict'
 
 const bitcoin = require('@tradle/bitcoinjs-lib')
+const Wallet = require('./')
 
 // wallet => transactor API (tradle/transactor)
 module.exports = function transactorClient (opts) {

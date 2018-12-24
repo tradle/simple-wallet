@@ -20,10 +20,10 @@ function Wallet (options) {
     bitcoin.ECKey.fromWIF(options.priv) :
     options.priv
 
-  typeforce('Object', this.priv)
+  typeforce(typeforce.Object, this.priv)
   typeforce({
-    blockchain: 'Object',
-    networkName: 'String'
+    blockchain: typeforce.Object,
+    networkName: typeforce.String
   }, options)
 
   assert(options.networkName in bitcoin.networks, 'unknown network: ' + options.networkName)
